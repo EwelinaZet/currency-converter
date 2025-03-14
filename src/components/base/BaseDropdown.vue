@@ -72,12 +72,11 @@ const handleClose = (): void => {
   width: 100%;
   box-sizing: border-box;
   position: relative;
+  cursor: pointer;
 
   @media screen and (min-width: 650px) {
     width: calc((100% - 40px)/3);
   }
-  
-  cursor: pointer;
 
   &__wrapper {
     overflow-y: auto;
@@ -91,8 +90,7 @@ const handleClose = (): void => {
     z-index: 1;
     width: 100%;
     box-sizing: border-box;
-
-
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
     &-list {
       box-sizing: border-box;
