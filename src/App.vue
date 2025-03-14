@@ -12,9 +12,10 @@ const currencyDropdownList = ref<Array<CurrencyType> | []>([])
 
 onMounted(async () => {
   await storeCurrency.getCurrencyData()
-  if (storeCurrency?.currency?.data && !storeCurrency?.currency?.pendingApiCall)
-    currency.value = storeCurrency.currency.data
-  currencyDropdownList.value = storeCurrency.currency.data
+  if (storeCurrency?.currency?.data && !storeCurrency?.currency?.pendingApiCall){
+    currency.value = storeCurrency.currency?.data
+    currencyDropdownList.value = storeCurrency.currency?.data
+  }
 })
 
 const updateList = (value: string) => {
@@ -27,29 +28,29 @@ const updateList = (value: string) => {
   }
 }
 
-const fromCurrency = ref<CurrencyType | {}>({})
+const fromCurrency = ref<CurrencyType | null>(null)
 
 const selectFromCurrency = (value: string) => {
-  fromCurrency.value = currencyDropdownList.value.find((item) => item.name === value) || {}
+  fromCurrency.value = currencyDropdownList.value.find((item) => item.name === value) || null
 }
 
-const toCurrency = ref<CurrencyType | {}>({})
+const toCurrency = ref<CurrencyType |  null>(null)
 
 const selectToCurrency = (value: string) => {
-  toCurrency.value = currencyDropdownList.value.find((item) => item.name === value) || {}
+  toCurrency.value = currencyDropdownList.value.find((item) => item.name === value) || null
 }
 
 const amount = ref<number>(1)
 
-const updateAmount = (value: number) => {
+const updateAmount = (value: number): void => {
   amount.value = value || 1
 }
 
 const showConversion = computed((): boolean => {
   return (
-    amount.value &&
-    !!Object.keys(fromCurrency.value).length &&
-    !!Object.keys(toCurrency.value).length
+    !!amount.value &&
+    !!fromCurrency.value &&
+    !!toCurrency.value
   )
 })
 
@@ -63,12 +64,14 @@ watch(
 const convertedValue = ref<string>('')
 
 const getConvertedValue = async (): Promise<void> => {
-  await storeCurrency.getConvertedValue(
+  if(fromCurrency?.value && toCurrency.value){
+    await storeCurrency.getConvertedValue(
     fromCurrency.value.short_code,
     toCurrency.value.short_code,
     amount.value
   )
-  convertedValue.value = storeCurrency.conversion.data
+  convertedValue.value = storeCurrency.conversion?.data || ''
+  }
 }
 </script>
 
@@ -85,7 +88,7 @@ const getConvertedValue = async (): Promise<void> => {
       <BaseDropdown
         placeholder="Type to search..."
         label="From"
-        :userSelect="fromCurrency.name || ''"
+        :userSelect="fromCurrency?.name"
         :itemList="currencyDropdownList"
         @updateList="updateList"
         @selectItem="selectFromCurrency"
@@ -93,7 +96,7 @@ const getConvertedValue = async (): Promise<void> => {
       <BaseDropdown
         placeholder="Type to search..."
         label="To"
-        :userSelect="toCurrency.name || ''"
+        :userSelect="toCurrency?.name"
         :itemList="currencyDropdownList"
         @updateList="updateList"
         @selectItem="selectToCurrency"
@@ -101,7 +104,7 @@ const getConvertedValue = async (): Promise<void> => {
     </div>
 
     <div class="currency-converter__wrapper">
-      <div v-if="showConversion" class="currency-converter__conversion">
+      <div v-if="fromCurrency && toCurrency" class="currency-converter__conversion">
         <div class="currency-converter__conversion-header">
           {{ amount }}{{ fromCurrency.symbol }} =
         </div>
@@ -121,8 +124,13 @@ const getConvertedValue = async (): Promise<void> => {
 .currency-converter {
   &__action {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 20px;
+
+
+    @media screen and (min-width: 650px) {
+      flex-direction: row;
+    }
   }
 
   &__wrapper {
@@ -133,7 +141,11 @@ const getConvertedValue = async (): Promise<void> => {
     color: gray;
     margin-top: 25px;
     padding: 24px 0;
-    font-size: 24px;
+    font-size: 16px;
+
+    @media screen and (min-width: 650px) {
+      font-size: 24px;
+    }
   }
 
   &__conversion {

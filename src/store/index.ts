@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { CurrencyType } from './models/CurrencyType'
+import type { CurrencyType } from '../models/CurrencyType'
 
 const token = 'Tv9W4UzCiJKVIn4DE6PRpy5iSwrjmtKg'
 

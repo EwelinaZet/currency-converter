@@ -30,7 +30,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'updateList', value: string): void
-  (e: 'updateItem', value: string): void
+  (e: 'updateItem', value: number): void
   (e: 'focus'): void
   (e: 'close'): void
 }>()
@@ -45,6 +45,10 @@ const handelClose = (): void => {
   inputValue.value = ''
 }
 
+
+const handleClickOutside = (): void => {
+  console.log('handleClickOutside')
+}
 watch(
   () => props.userSelect,
   () => {
@@ -68,7 +72,7 @@ watch(
 </script>
 
 <template>
-  <div class="base-input">
+  <div class="base-input" v-click-outside="handleClickOutside">
     <span class="base-input__label">{{ label }}</span>
     <div class="base-input__wrapper">
       <input
@@ -108,7 +112,8 @@ watch(
       padding: 8px 12px;
       font-size: 16px;
       line-height: 26px;
-      width: 300px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     &-close {

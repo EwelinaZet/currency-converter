@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
 
-const props = defineProps({
+defineProps({
   placeholder: {
     type: String,
     default: ''
@@ -69,7 +69,14 @@ const handleClose = (): void => {
 
 <style lang="scss" scoped>
 .base-dropdown {
-  width: 324px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+
+  @media screen and (min-width: 650px) {
+    width: calc((100% - 40px)/3);
+  }
+  
   cursor: pointer;
 
   &__wrapper {
@@ -82,9 +89,13 @@ const handleClose = (): void => {
     margin-top: 3px;
     position: absolute;
     z-index: 1;
-    width: 324px;
+    width: 100%;
+    box-sizing: border-box;
+
+
 
     &-list {
+      box-sizing: border-box;
       &-item {
         padding: 3px 6px;
       }
